@@ -7,12 +7,35 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
+
+include_directories(
+  include
+)
+
+set(dependencies
+  "rclcpp"
+  "geometry_msgs"
+  "nav_msgs"
+  "rclcpp"
+  "sensor_msgs"
+  "tf2"
+)
+
+add_executable(naive_explorer src/naive_explorer.cpp)
+ament_target_dependencies(naive_explorer ${dependencies})
+target_include_directories(naive_explorer PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(naive_explorer PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+install(TARGETS naive_explorer
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -26,4 +49,11 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_include_directories(include)
+ament_export_dependencies(rclcpp)
+ament_export_dependencies(geometry_msgs)
+ament_export_dependencies(nav_msgs)
+ament_export_dependencies(rclcpp)
+ament_export_dependencies(sensor_msgs)
+ament_export_dependencies(tf2)
 ament_package()
