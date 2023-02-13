@@ -56,6 +56,17 @@ private:
   double scan_data_[3];
   double linear_vel;
   double angular_vel;
+  double escape_range;
+  double check_forward_dist;
+  double check_side_dist;
+  uint16_t check_forward_angle;
+  uint16_t check_left_angle;
+  uint16_t check_right_angle;
+  
+  std::string scan_topic;
+  std::string odom_topic;
+  std::string cmd_topic;
+
 
   // ROS timer
   rclcpp::TimerBase::SharedPtr update_timer_;

@@ -33,13 +33,30 @@ NaiveExplorer::NaiveExplorer()
   robot_pose_ = 0.0;
   prev_robot_pose_ = 0.0;
   
-  this->declare_parameter<std::double>("linear_vel", 0.3);
-  this->declare_parameter<std::double>("angular_vel", 1.5);
+  this->declare_parameter("linear_vel", 0.3);
+  this->declare_parameter("angular_vel", 1.5);
+  this->declare_parameter("escape_range", 30.0 * DEG2RAD);
+  this->declare_parameter("check_forward_dist", 0.7);
+  this->declare_parameter("check_side_dist", 0.6);
+  this->declare_parameter("check_forward_angle", 0);
+  this->declare_parameter("check_left_angle", 30);
+  this->declare_parameter("check_right_angle", 330);   
+  this->declare_parameter("scan_topic", "scan");
+  this->declare_parameter("odom_topic", "odom");
+  this->declare_parameter("cmd_topic", "cmd_vel");
 
-  this->declare_parameter<std::string>("scan_topic", "scan");
-  this->declare_parameter<std::string>("odom_topic", "odom");
-  this->declare_parameter<std::string>("cmd_topic", "cmd_vel");
-
+  linear_vel = this->get_parameter("linear_vel").as_double();
+  angular_vel = this->get_parameter("angular_vel").as_double();
+  escape_range = this->get_parameter("escape_range").as_double();
+  check_forward_dist = this->get_parameter("check_forward_dist").as_double();
+  check_side_dist = this->get_parameter("check_side_dist").as_double();
+  check_forward_angle = this->get_parameter("check_forward_angle").as_int();
+  check_left_angle = this->get_parameter("check_left_angle").as_int();
+  check_right_angle = this->get_parameter("check_right_angle").as_int();
+  scan_topic = this->get_parameter("scan_topic").as_string();
+  odom_topic = this->get_parameter("odom_topic").as_string();
+  cmd_topic = this->get_parameter("cmd_topic").as_string();
+  
   /************************************************************
   ** Initialise ROS publishers and subscribers
   ************************************************************/
@@ -91,12 +108,13 @@ void NaiveExplorer::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 
 void NaiveExplorer::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
 {
-  uint16_t scan_angle[3] = {0, 30, 330};
+  uint16_t scan_angle[3] = {check_forward_angle, check_left_angle, check_right_angle};
 
   for (int num = 0; num < 3; num++) {
     if (std::isinf(msg->ranges.at(scan_angle[num]))) {
       scan_data_[num] = msg->range_max;
     } else {
+      // get pointcloud distance at corresponding check angle
       scan_data_[num] = msg->ranges.at(scan_angle[num]);
     }
   }
@@ -117,9 +135,6 @@ void NaiveExplorer::update_cmd_vel(double linear, double angular)
 void NaiveExplorer::update_callback()
 {
   static uint8_t robot_state_num = 0;
-  double escape_range = 30.0 * DEG2RAD;
-  double check_forward_dist = 0.7;
-  double check_side_dist = 0.6;
 
   switch (robot_state_num) {
     case GET_ROBOT_DIRECTION:
@@ -142,7 +157,7 @@ void NaiveExplorer::update_callback()
       break;
 
     case ROBOT_DRIVE_FORWARD:
-      update_cmd_vel(LINEAR_VELOCITY, 0.0);
+      update_cmd_vel(linear_vel, 0.0);
       robot_state_num = GET_ROBOT_DIRECTION;
       break;
 
@@ -150,7 +165,7 @@ void NaiveExplorer::update_callback()
       if (fabs(prev_robot_pose_ - robot_pose_) >= escape_range) {
         robot_state_num = GET_ROBOT_DIRECTION;
       } else {
-        update_cmd_vel(0.0, -1 * ANGULAR_VELOCITY);
+        update_cmd_vel(0.0, -1 * angular_vel);
       }
       break;
 
@@ -158,7 +173,7 @@ void NaiveExplorer::update_callback()
       if (fabs(prev_robot_pose_ - robot_pose_) >= escape_range) {
         robot_state_num = GET_ROBOT_DIRECTION;
       } else {
-        update_cmd_vel(0.0, ANGULAR_VELOCITY);
+        update_cmd_vel(0.0, angular_vel);
       }
       break;
 
