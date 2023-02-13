@@ -32,7 +32,10 @@ NaiveExplorer::NaiveExplorer()
 
   robot_pose_ = 0.0;
   prev_robot_pose_ = 0.0;
-  std::string scan_topic, odom_topic, cmd_topic;
+  
+  this->declare_parameter<std::double>("linear_vel", 0.3);
+  this->declare_parameter<std::double>("angular_vel", 1.5);
+
   this->declare_parameter<std::string>("scan_topic", "scan");
   this->declare_parameter<std::string>("odom_topic", "odom");
   this->declare_parameter<std::string>("cmd_topic", "cmd_vel");

@@ -31,9 +31,6 @@
 #define LEFT   1
 #define RIGHT  2
 
-#define LINEAR_VELOCITY  0.3
-#define ANGULAR_VELOCITY 1.5
-
 #define GET_ROBOT_DIRECTION 0
 #define ROBOT_DRIVE_FORWARD 1
 #define ROBOT_RIGHT_TURN    2
@@ -52,11 +49,13 @@ private:
   // ROS topic subscribers
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
-
+  
   // Variables
   double robot_pose_;
   double prev_robot_pose_;
   double scan_data_[3];
+  double linear_vel;
+  double angular_vel;
 
   // ROS timer
   rclcpp::TimerBase::SharedPtr update_timer_;
