@@ -32,6 +32,10 @@ NaiveExplorer::NaiveExplorer()
 
   robot_pose_ = 0.0;
   prev_robot_pose_ = 0.0;
+  std::string scan_topic, odom_topic, cmd_topic;
+  this->declare_parameter<std::string>("scan_topic", "scan");
+  this->declare_parameter<std::string>("odom_topic", "odom");
+  this->declare_parameter<std::string>("cmd_topic", "cmd_vel");
 
   /************************************************************
   ** Initialise ROS publishers and subscribers
@@ -39,18 +43,18 @@ NaiveExplorer::NaiveExplorer()
   auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
 
   // Initialise publishers
-  cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", qos);
+  cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>(cmd_topic, qos);
 
   // Initialise subscribers
   scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-    "scan", \
+    scan_topic, \
     rclcpp::SensorDataQoS(), \
     std::bind(
       &NaiveExplorer::scan_callback, \
       this, \
       std::placeholders::_1));
   odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-    "odom", qos, std::bind(&NaiveExplorer::odom_callback, this, std::placeholders::_1));
+    odom_topic, qos, std::bind(&NaiveExplorer::odom_callback, this, std::placeholders::_1));
 
   /************************************************************
   ** Initialise ROS timers
