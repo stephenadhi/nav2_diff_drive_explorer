@@ -13,7 +13,7 @@ def generate_launch_description():
     )
     # laod parameters
     with open(params_file_path, 'r') as file:
-        naive_explorer_params = yaml.safe_load(file)['naive_explorer']['ros__parameters']
+        naive_explorer_params = yaml.safe_load(file)['naive_explorer']['ros_parameters']
     
     naive_explorer_cmd = Node(
         package='nav2_diff_drive_explorer',
