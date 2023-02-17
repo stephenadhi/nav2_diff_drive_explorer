@@ -1,0 +1,13 @@
+naive_explorer:
+  ros_parameters:
+    linear_vel: 0.3             # m
+    anglular_veL: 0.5           # rad
+    escape_range: 0.5           # rad
+    check_forward_dist: 0.7     # m
+    check_side_dist: 0.6        # m
+    check_forward_angle: 0      # degree
+    check_left_angle: 30        # degree
+    check_right_angle: 330      # degree
+    scan_topic: /locobot/scan
+    odom_topic: /locobot/sim_ground_truth_pose
+    cmd_topic: /locobot/diffdrive_controller/cmd_vel_unstamped
