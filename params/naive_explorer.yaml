@@ -9,5 +9,5 @@ naive_explorer:
     check_left_angle: 30        # degree
     check_right_angle: 330      # degree
     scan_topic: /locobot/scan
-    odom_topic: /locobot/sim_ground_truth_pose
+    odom_topic: /locobot/diffdrive_controller/odom
     cmd_topic: /locobot/diffdrive_controller/cmd_vel_unstamped
