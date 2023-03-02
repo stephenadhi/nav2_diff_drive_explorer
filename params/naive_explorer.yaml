@@ -3,7 +3,7 @@ naive_explorer:
     linear_vel: 0.2             # m
     anglular_veL: 0.02          # rad
     escape_range: 0.02          # rad
-    check_forward_dist: 0.7     # m
+    check_forward_dist: 1.0     # m
     check_side_dist: 0.6        # m
     check_forward_angle: 0      # degree
     check_left_angle: 30        # degree
